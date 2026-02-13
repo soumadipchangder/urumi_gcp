@@ -1,0 +1,56 @@
+{{- if eq .Values.engine "woocommerce" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.wordpress.replicas }}
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress
+          image: {{ .Values.wordpress.image }}
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: mysql:3306
+            - name: WORDPRESS_DB_NAME
+              value: wordpress
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources: {{- toYaml .Values.wordpress.resources | nindent 12 }}
+          volumeMounts:
+            - name: wordpress-data
+              mountPath: /var/www/html
+
+      volumes:
+        - name: wordpress-data
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
+{{- end }}

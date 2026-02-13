@@ -1,0 +1,5 @@
+mysql:
+  storageClass: "local-path"
+
+ingress:
+  baseDomain: 136.111.245.173.nip.io

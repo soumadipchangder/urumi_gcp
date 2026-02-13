@@ -1,0 +1,23 @@
+{
+  "name": "urumi-store-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "dashboard",
+    "charts"
+  ],
+  "scripts": {
+    "backend:dev": "cd backend && npm run dev",
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "backend:install": "cd backend && npm install",
+    "dashboard:install": "cd dashboard && npm install"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.20.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
+  }
+}

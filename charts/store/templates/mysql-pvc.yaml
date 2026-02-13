@@ -1,0 +1,18 @@
+{{- /* Disabled: mysql-pvc is redundant when using StatefulSet volumeClaimTemplates. Keeping file for backward-compatibility but not rendered by default. */ -}}
+{{- if false }}
+{{- if eq .Values.engine "woocommerce" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.mysql.storageClass | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.mysql.storageSize }}
+{{- end }}
+{{- end }}
+

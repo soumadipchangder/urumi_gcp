@@ -1,0 +1,64 @@
+{{- if eq .Values.engine "woocommerce" }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: {{ .Values.mysql.image }}
+          env:
+            - name: MYSQL_DATABASE
+              value: wordpress
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: rootPassword
+          ports:
+            - containerPort: 3306
+          readinessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - 127.0.0.1
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          resources: {{- toYaml .Values.mysql.resources | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.mysql.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.mysql.storageSize }}
+{{- end }}
+

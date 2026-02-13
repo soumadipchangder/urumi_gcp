@@ -1,0 +1,5 @@
+mysql:
+  storageClass: "standard"
+
+ingress:
+  baseDomain: "localtest.me"

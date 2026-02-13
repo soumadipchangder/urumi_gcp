@@ -1,0 +1,5 @@
+1. Store namespace: {{ .Release.Namespace }}
+2. Store URL: http://{{ .Release.Namespace }}.{{ .Values.ingress.baseDomain }}
+3. Admin URL (WP): http://{{ .Release.Namespace }}.{{ .Values.ingress.baseDomain }}/wp-admin/
+
+To uninstall: helm uninstall {{ .Release.Name }} --namespace {{ .Release.Namespace }}

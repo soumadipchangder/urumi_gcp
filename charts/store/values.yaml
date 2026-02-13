@@ -1,0 +1,49 @@
+storeId: ""
+host: ""
+engine: "woocommerce"
+
+wordpress:
+  # pinned, non-floating tag for production determinism
+  image: wordpress:6.4.3-php8.2-apache
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+mysql:
+  # pinned MySQL image
+  image: mysql:8.0.36
+  storageSize: 2Gi
+  # configurable storageClass (default kept small for kind/k3s portability)
+  storageClass: "standard"
+  # DB user (stable), passwords MUST come from backend via --set; do NOT hardcode in templates
+  user: "wordpress"
+  password: ""
+  rootPassword: ""
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+# ingress defaults (can be overridden by values-local.yaml / values-prod.yaml)
+ingress:
+  className: "nginx"
+  baseDomain: "stores.local"
+
+# medusa stub defaults
+medusaStub:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
